@@ -1,0 +1,3 @@
+(library
+ (name mini_graph)
+ (public_name mini_graph))
