@@ -60,3 +60,11 @@ val transpose : graph -> int list array
   Computes the strongly connected components of a graph
 *)
 val kosaraju : graph -> int list list
+
+(**
+  Perform a Breadth-first-search traversal
+*)
+val bfs : graph -> int -> (int -> unit) -> unit
+
+
+val dijkstra : graph -> int -> ((int * int) -> float) -> (float array * int option array)

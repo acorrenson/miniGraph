@@ -15,6 +15,8 @@ let mk_heap (cmp : 'a -> 'a -> bool) (default : 'a) : 'a heap =
     cmp = cmp;
   }
 
+let is_empty (h : 'a heap) =
+  h.size = 0
 
 let incr_size (h : 'a heap) =
   h.size <- h.size + 1;

@@ -1,4 +1,3 @@
 (library
  (name mini_graph)
- (public_name mini_graph)
- (modules heap mini_graph))
+ (public_name mini_graph))

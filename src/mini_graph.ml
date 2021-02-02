@@ -1,6 +1,4 @@
-(**
-  Type of graphs
-*)
+(** Type of graphs *)
 type graph = int list array
 
 let iter (f : int -> int list -> unit) (g : graph) =
@@ -53,7 +51,6 @@ let dfs_ordered g pre post order =
   in
   List.iter visit order
 
-
 let topo_sort (g : graph) =
   let order = ref [] in
   let post x = order := x::!order in
@@ -103,4 +100,43 @@ let kosaraju (g : graph) =
   let () = dfs_ordered g' pre post order in
   !ccs
 
-(* let bfs (g : graph) = *)
+let bfs (g : graph) (s : int) (action : int -> unit) =
+  let n = vertices g in
+  let visited = Array.make n false in
+  let q = Queue.empty () in
+  let () = Queue.push q s in
+  while not (Queue.is_empty q) do
+    let x = Queue.pop q in
+    if not visited.(x) then
+      action x;
+      List.iter (Queue.push q) g.(x)
+  done
+
+let dijkstra (g : graph) (s1 : int) (cost : (int * int) -> float) =
+  let n = vertices g in
+  let visited = Array.make n false in
+  let distances = Array.make n max_float in
+  let preds = Array.make n None in
+  let q = Heap.mk_heap (fun (_, cx) (_, cy) -> cx <= cy) (0, 0.) in
+  let () = Heap.add q (s1, 0.) in
+  let () = distances.(s1) <- 0. in
+
+  let visit_edge x y =
+    let dxy = distances.(x) +. cost (x, y) in
+    if distances.(y) > dxy then begin
+      distances.(y) <- dxy;
+      Heap.add q (y, dxy);
+      preds.(y) <- Some x
+    end
+  in
+  
+  while not (Heap.is_empty q) do
+    let (x, _) = Heap.get_min q in
+    let () = Heap.remove_min q in
+    if not visited.(x) then
+      visited.(x) <- true;
+      List.iter (visit_edge x) g.(x)
+  done;
+
+  (distances, preds)
+
