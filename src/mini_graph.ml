@@ -102,3 +102,5 @@ let kosaraju (g : graph) =
   in
   let () = dfs_ordered g' pre post order in
   !ccs
+
+(* let bfs (g : graph) = *)
