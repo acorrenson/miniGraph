@@ -17,7 +17,7 @@ val succ : graph -> int -> int list
 (**
   Create a new graph based on a list of (oriented) edges
 *)
-val mk_graph : (int * int) list -> int list array
+val mk_graph : (int * int) list -> graph
 
 (**
   Return the number of vertices in a graph (in time O(1))
