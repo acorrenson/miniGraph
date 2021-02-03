@@ -1,6 +1,9 @@
+(**
+  {1 Mini graph module}
+*)
 
 (**
-  Abstract type of graphs.
+  Abstract type of graphs
 *)
 type graph
 
@@ -66,5 +69,9 @@ val kosaraju : graph -> int list list
 *)
 val bfs : graph -> int -> (int -> unit) -> unit
 
-
+(**
+  [dikstra g s cost] returns a tuple [distances, preds] where
+  [distances.(x)] is the cost of an optimal path from [s] to [x] in [g]
+  and [preds.(x)] is the predecessor of [x] in the optimal path from [s] to [x].
+*)
 val dijkstra : graph -> int -> ((int * int) -> float) -> (float array * int option array)

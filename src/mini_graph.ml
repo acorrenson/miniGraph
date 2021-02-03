@@ -139,4 +139,3 @@ let dijkstra (g : graph) (s1 : int) (cost : (int * int) -> float) =
   done;
 
   (distances, preds)
-
