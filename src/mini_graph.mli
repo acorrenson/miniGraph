@@ -5,7 +5,7 @@
 (**
    Abstract type of graphs
 *)
-type graph = int list array
+type graph
 
 (**
    Iterate over vertices and their successors list
@@ -18,9 +18,17 @@ val iter : (int -> int list -> unit) -> graph -> unit
 val succ : graph -> int -> int list
 
 (**
-   Create a new graph based on a list of (oriented) edges
+   Create a new graph with [n] vertices
 *)
-val mk_graph : (int * int) list -> graph
+val mk_graph : int -> graph
+
+val add_edge : graph -> int -> int -> unit
+
+val add_arc : graph -> int -> int -> unit
+
+val add_edges : graph -> (int * int) list -> unit
+
+val add_arcs : graph -> (int * int) list -> unit
 
 (**
    Return the number of vertices in a graph (in time O(1))

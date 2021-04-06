@@ -7,20 +7,22 @@ let iter (f : int -> int list -> unit) (g : graph) =
 let succ (g : graph) (x : int) =
   g.(x)
 
-let sons_of_list (edges : (int * int) list) (x : int) : int list =
-  List.fold_left (fun sons (x', y) ->
-      if x' = x then y::sons 
-      else sons
-    ) [] edges
+let mk_graph (n : int) =
+  Array.init n (fun _ -> [])
 
-let count_vertices (edges : (int * int) list) : int =
-  1 + List.fold_left (fun count (x, y) ->
-      max count (max x y)
-    ) 0 edges
+let add_arc (g : graph) (x : int) (y : int) =
+  if not (List.mem y g.(x)) then
+    g.(x) <- y::g.(x)
 
-let mk_graph (edges : (int * int) list) =
-  let n = count_vertices edges in
-  Array.init n (sons_of_list edges)
+let add_edge (g : graph) (x : int) (y : int) =
+  add_arc g x y;
+  add_arc g y x
+
+let add_edges (g : graph) (edges : (int * int) list) =
+  List.iter (fun (x, y) -> add_edge g x y) edges
+
+let add_arcs (g : graph) (arcs : (int * int) list) =
+  List.iter (fun (x, y) -> add_arc g x y) arcs
 
 let vertices (g : graph) : int =
   Array.length g
@@ -164,6 +166,3 @@ let bron_kerbosch (g : graph) =
   let n = Array.length g in
   let vtx = Clique.of_list (List.init n Fun.id) in
   aux Clique.empty vtx Clique.empty
-
-
-

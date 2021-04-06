@@ -1,9 +1,11 @@
 open Mini_graph
 open Mini_graph__Heap
 
-let g1 = mk_graph [(0, 1); (2, 1); (0, 2)]
+let g1 = mk_graph 3
+let _ = add_arcs g1 [(0, 1); (2, 1); (0, 2)]
 
-let g2 = mk_graph [(1, 0); (2, 1); (0, 2)]
+let g2 = mk_graph 3
+let _ = add_arcs g2 [(1, 0); (2, 1); (0, 2)]
 
 let t1 = mk_heap (<=) 0
 
@@ -52,3 +54,35 @@ let%test "min_t3" =
 
 let%test "min_t4" =
   get_min t4 = 2
+
+let g_clique1 = mk_graph 3
+let _ = add_edges g_clique1 [(0, 1); (1, 2); (2, 0)]
+
+let%test "g_clique1 has 1 maximal clique" =
+  bron_kerbosch g_clique1 |> CliqueSet.cardinal = 1
+
+let%test "g_clique1 maximal cliques are of size 3" =
+  bron_kerbosch g_clique1 |> CliqueSet.for_all (fun s -> Clique.cardinal s = 3)
+
+let%test "g_clique2 maximal cliques are of size 3" =
+  let c = bron_kerbosch g_clique1 in
+  CliqueSet.(
+    exists (fun s -> Clique.(equal s (of_list [0; 1; 2]))) c
+  )
+
+let g_clique2 = mk_graph 6
+let _ = add_edges g_clique2 [(0, 1); (1, 2); (2, 0); (3, 4); (4, 5); (5, 3)]
+
+let%test "g_clique2 has 2 maximal cliques" =
+  bron_kerbosch g_clique2 |> CliqueSet.cardinal = 2
+
+let%test "g_clique2 maximal cliques are of size 3" =
+  bron_kerbosch g_clique2 |> CliqueSet.for_all (fun s -> Clique.cardinal s = 3)
+
+let%test "g_clique2 maximal cliques are of size 3" =
+  let c = bron_kerbosch g_clique2 in
+  CliqueSet.(
+    exists (fun s -> Clique.(equal s (of_list [0; 1; 2]))) c
+    &&
+    exists (fun s -> Clique.(equal s (of_list [3; 4; 5]))) c
+  )
