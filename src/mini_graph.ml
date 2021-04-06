@@ -9,14 +9,14 @@ let succ (g : graph) (x : int) =
 
 let sons_of_list (edges : (int * int) list) (x : int) : int list =
   List.fold_left (fun sons (x', y) ->
-    if x' = x then y::sons 
-    else sons
-  ) [] edges
+      if x' = x then y::sons 
+      else sons
+    ) [] edges
 
 let count_vertices (edges : (int * int) list) : int =
   1 + List.fold_left (fun count (x, y) ->
-    max count (max x y)
-  ) 0 edges
+      max count (max x y)
+    ) 0 edges
 
 let mk_graph (edges : (int * int) list) =
   let n = count_vertices edges in
@@ -78,8 +78,8 @@ let transpose (g : graph) =
   let n = vertices g in
   let g' = Array.make n [] in
   let () = Array.iteri (fun x sons ->
-    List.iter (fun y -> g'.(y) <- x::g'.(y)) sons
-  ) g
+      List.iter (fun y -> g'.(y) <- x::g'.(y)) sons
+    ) g
   in g'
 
 let kosaraju (g : graph) =
@@ -109,7 +109,7 @@ let bfs (g : graph) (s : int) (action : int -> unit) =
     let x = Queue.pop q in
     if not visited.(x) then
       action x;
-      List.iter (Queue.push q) g.(x)
+    List.iter (Queue.push q) g.(x)
   done
 
 let dijkstra (g : graph) (s1 : int) (cost : (int * int) -> float) =
@@ -129,13 +129,41 @@ let dijkstra (g : graph) (s1 : int) (cost : (int * int) -> float) =
       preds.(y) <- Some x
     end
   in
-  
+
   while not (Heap.is_empty q) do
     let (x, _) = Heap.get_min q in
     let () = Heap.remove_min q in
     if not visited.(x) then
       visited.(x) <- true;
-      List.iter (visit_edge x) g.(x)
+    List.iter (visit_edge x) g.(x)
   done;
 
   (distances, preds)
+
+module Clique = Set.Make(Int)
+module CliqueSet = Set.Make (Clique)
+
+let bron_kerbosch (g : graph) =
+  let rec aux (r : Clique.t) (p : Clique.t) (x : Clique.t) =
+    if Clique.(is_empty p && is_empty x) then
+      CliqueSet.singleton r
+    else
+      let init = (CliqueSet.empty, p, x) in
+      let (res, _, _) = Clique.fold (fun v (acc, p, x) ->
+          let nbg = Clique.of_list g.(v) in
+          let r' = Clique.add v r in
+          let p' = Clique.inter nbg p in
+          let x' = Clique.inter x nbg in
+          let np = Clique.remove v p in
+          let nx = Clique.add v x in
+          let cliques = aux r' p' x' in
+          CliqueSet.union cliques acc, np, nx
+        ) p init
+      in res
+  in
+  let n = Array.length g in
+  let vtx = Clique.of_list (List.init n Fun.id) in
+  aux Clique.empty vtx Clique.empty
+
+
+
